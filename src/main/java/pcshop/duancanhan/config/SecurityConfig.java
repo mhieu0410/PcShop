@@ -29,6 +29,21 @@ public class SecurityConfig {
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
+
+                        .successHandler((request, response, authentication) -> {
+                            System.out.println("=== DEBUG: Login SUCCESS for user: " + authentication.getName() + " ===");
+                            System.out.println("=== DEBUG: User authorities: " + authentication.getAuthorities() + " ===");
+                            
+                            // Kiểm tra role của user
+                            if (authentication.getAuthorities().stream()
+                                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                                System.out.println("=== DEBUG: Redirecting ADMIN to /admin/dashboard ===");
+                                response.sendRedirect("/admin/dashboard");
+                            } else {
+                                System.out.println("=== DEBUG: Redirecting USER to / ===");
+                                response.sendRedirect("/");
+                            }
+                        })
                         .permitAll()
                 )
                 .logout((logout) -> logout

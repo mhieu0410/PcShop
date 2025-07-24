@@ -9,20 +9,54 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
+import pcshop.duancanhan.pojo.Admin;
+import pcshop.duancanhan.repository.AdminRepository;
+import java.util.Optional;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private CustomerRepository customerRepository;
 
+    // Thêm AdminRepository
+    @Autowired
+    private AdminRepository adminRepository;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        System.out.println("=== DEBUG: Trying to login with email: " + email + " ===");
+        
+        //tìm Customer
         Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        return org.springframework.security.core.userdetails.User
-                .withUsername(customer.getEmail())
-                .password(customer.getPassword())
-                .roles("USER") // Mặc định là USER, có thể mở rộng với roles từ database
-                .build();
+                .orElse(null);
+        
+        if (customer != null) {
+            System.out.println("=== DEBUG: Found CUSTOMER: " + customer.getEmail() + " ===");
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(customer.getEmail())
+                    .password(customer.getPassword())
+                    .roles("USER") 
+                    .build();
+        }
+
+        System.out.println("=== DEBUG: Customer not found, checking ADMIN... ===");
+        
+        Optional<Admin> adminOpt = adminRepository.findByEmail(email);
+        if (adminOpt.isPresent()) {
+            Admin admin = adminOpt.get();
+            System.out.println("=== DEBUG: Found ADMIN: " + admin.getEmail() + " ===");
+            System.out.println("=== DEBUG: Admin password hash: " + admin.getPassword() + " ===");
+            return org.springframework.security.core.userdetails.User
+                    .withUsername(admin.getEmail())
+                    .password(admin.getPassword())
+                    .roles("ADMIN")
+                    .build();
+        }
+
+        System.out.println("=== DEBUG: Neither customer nor admin found for email: " + email + " ===");
+        // Nếu không tìm thấy cả Customer và Admin
+        throw new UsernameNotFoundException("User not found with email: " + email);
     }
 }
