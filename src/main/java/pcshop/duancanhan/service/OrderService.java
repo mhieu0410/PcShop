@@ -11,6 +11,7 @@ import pcshop.duancanhan.repository.OrderRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -122,5 +123,11 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(status);
         orderRepository.save(order);
+    }
+
+    public List<Order> getOrdersByCustomerEmail(String email) {
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        return orderRepository.findByCustomer(customer);
     }
 }

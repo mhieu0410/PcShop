@@ -1,16 +1,20 @@
 package pcshop.duancanhan.pojo;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "customer")
+@EqualsAndHashCode(exclude = {"cart", "orders"}) // Loại trừ cart và orders khỏi hashCode() và equals()
 public class Customer {
 
     @Id
@@ -27,8 +31,8 @@ public class Customer {
     private String email;
 
     @NotBlank(message = "Mật khẩu không được để trống")
-    @Column(name = "password", nullable = false) // Nên lưu mật khẩu đã được hash
-    private String password;
+    @Column(name = "password", nullable = false)
+    private String password; // Nên hash password trước khi lưu (sử dụng BCrypt hoặc tương tự)
 
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
@@ -41,6 +45,7 @@ public class Customer {
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference // Điều khiển serialize để tránh vòng lặp
     private Cart cart;
 
     @OneToMany(mappedBy = "customer")

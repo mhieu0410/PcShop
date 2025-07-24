@@ -51,11 +51,10 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @GetMapping("/add/{id}")
-    @ResponseBody
-    public ResponseEntity<String> addToCart(@PathVariable("id") Long productId, HttpSession session) {
-        cartService.addToCart(productId, session);
-        return ResponseEntity.ok("Added to cart");
+    @GetMapping("/add/{productId}")
+    public String addToCart(@PathVariable Long productId, Model model) {
+        cartService.addToCart(productId, 1); // Giả sử có phương thức này
+        return "redirect:/products"; // Trả về redirect (nếu cần trong backend)
     }
 
 }

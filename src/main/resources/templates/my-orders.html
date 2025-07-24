@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle} ?: 'Lịch sử đơn hàng'">Lịch sử đơn hàng</title>
+  <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{base :: nav}"></div>
+
+<div class="container my-4">
+  <h2 class="mb-4 text-center">Lịch sử đơn hàng</h2>
+
+  <div th:if="${orders == null or orders.isEmpty()}" class="alert alert-info">
+    Bạn chưa có đơn hàng nào.
+  </div>
+
+  <div th:unless="${orders == null or orders.isEmpty()}">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Mã đơn hàng</th>
+        <th>Ngày đặt</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Địa chỉ giao hàng</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${orders}">
+        <td th:text="${order.orderId}">Mã đơn</td>
+        <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Ngày đặt</td>
+        <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')} + ' VNĐ'">Tổng tiền</td>
+        <td th:text="${order.status}">Trạng thái</td>
+        <td th:text="${order.shippingAddress}">Địa chỉ</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div th:replace="~{base :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

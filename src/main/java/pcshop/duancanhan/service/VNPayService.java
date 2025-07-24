@@ -1,38 +1,22 @@
 package pcshop.duancanhan.service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pcshop.duancanhan.VNPayUtils;
+import pcshop.duancanhan.pojo.Order;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import java.security.MessageDigest;
 
 @Service
 public class VNPayService {
 
-    @Value("${vnpay.tmnCode}")
-    private String vnp_TmnCode;
-
-    @Value("${vnpay.hashSecret}")
-    private String vnp_HashSecret;
-
-    @Value("${vnpay.payUrl}")
-    private String vnp_PayUrl;
-
-    @Value("${vnpay.returnUrl}")
-    private String vnp_ReturnUrl;
-
-    public String createPaymentUrl(BigDecimal amount, String orderInfo, HttpServletRequest request) throws Exception {
-            String orderType = "other";
-        String vnp_TxnRef = VNPayConfig.getRandomNumber(8); // mã giao dịch
+    public String createPaymentUrl(Order order, HttpServletRequest request) throws Exception {
+        String orderType = "other";
+        String vnp_TxnRef = order.getOrderId().toString(); // Sử dụng orderId làm mã giao dịch
         String vnp_IpAddr = VNPayConfig.getIpAddress(request);
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
 
@@ -40,10 +24,10 @@ public class VNPayService {
         vnp_Params.put("vnp_Version", VNPayConfig.vnp_Version);
         vnp_Params.put("vnp_Command", "pay");
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(amount.multiply(BigDecimal.valueOf(100)).longValue()));
+        vnp_Params.put("vnp_Amount", String.valueOf(order.getTotalPrice().multiply(BigDecimal.valueOf(100)).longValue()));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang");
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + order.getOrderId());
         vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_ReturnUrl);
@@ -76,14 +60,5 @@ public class VNPayService {
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + query.toString();
 
         return paymentUrl;
-    }
-
-    private String hmacSHA512(String key, String data) throws Exception {
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.update(key.getBytes(StandardCharsets.UTF_8));
-        byte[] bytes = md.digest(data.getBytes(StandardCharsets.UTF_8));
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) sb.append(String.format("%02x", b));
-        return sb.toString();
     }
 }
