@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xác nhận đơn hàng - Computer Parts Store</title>
+  <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{base :: nav}"></div>
+
+<div class="container my-4" th:fragment="content">
+  <h2 class="mb-4 text-center">Xác nhận đơn hàng</h2>
+  <div th:if="${param.success}" class="alert alert-success text-center">
+    Cảm ơn bạn đã đặt hàng! Đơn hàng của bạn đã được ghi nhận và đang được xử lý.
+  </div>
+  <div th:if="${param.error}" class="alert alert-danger text-center">
+    <span th:text="${param.error[0]}">Thanh toán thất bại</span>
+  </div>
+  <div class="text-center">
+    <a th:href="@{/products}" class="btn btn-primary">Tiếp tục mua sắm</a>
+  </div>
+</div>
+
+<div th:replace="~{base :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

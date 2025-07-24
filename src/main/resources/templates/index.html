@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Trang chủ</title>
+</head>
+<body>
+<div th:replace="~{base}"> <!-- Kế thừa toàn bộ base.html -->
+    <div th:fragment="content">
+        <h1>Chào mừng đến với Computer Parts Store</h1>
+        <p>Khám phá các linh kiện máy tính chất lượng cao và dịch vụ lắp ráp PC theo yêu cầu.</p>
+        <a th:href="@{/products}" class="btn btn-primary">Xem sản phẩm</a>
+    </div>
+</div>
+</body>
+</html>

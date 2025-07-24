@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kết quả thanh toán</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 100px;
+        }
+        .success {
+            color: green;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .fail {
+            color: red;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h2 th:text="${message}"
+    th:classappend="${status == 'success'} ? 'success' : 'fail'">
+</h2>
+
+<a th:href="@{/products}">Quay lại trang chủ</a>
+
+</body>
+</html>

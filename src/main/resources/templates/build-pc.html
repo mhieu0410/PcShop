@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'Lắp ráp PC - Computer Parts Store'">Lắp ráp PC</title>
+
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<!-- HEADER NAVIGATION -->
+<div th:replace="~{base :: nav}"></div>
+
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Tùy chỉnh và lắp ráp PC</h2>
+
+    <!-- Error Message -->
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}">Lỗi</span>
+    </div>
+
+    <div class="row">
+        <!-- Cột trái: Danh mục linh kiện -->
+        <div class="col-md-4">
+            <h4>Chọn danh mục linh kiện</h4>
+            <ul class="list-group">
+                <li th:each="category : ${categories}" class="list-group-item">
+                    <a th:href="@{'/build-pc/select-category/' + ${category.categoryId}}"
+                       th:text="${category.name}"
+                       class="text-decoration-none"></a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Cột phải: Sản phẩm liên quan -->
+        <div class="col-md-8">
+            <h4>Sản phẩm liên quan</h4>
+
+            <div th:if="${relatedProducts != null and !relatedProducts.isEmpty()}">
+                <div class="row">
+                    <div th:each="product : ${relatedProducts}" class="col-md-6 mb-3">
+                        <div class="card">
+                            <!-- Nếu có ảnh -->
+                            <img th:src="@{${'/'+product.imageUrl}}"
+                                 alt="Ảnh sản phẩm"
+                                 class="card-img-top img-fluid"
+                                 style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${product.name}">Tên sản phẩm</h5>
+                                <p class="card-text" th:text="${product.price != null} ? ${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')} + ' VNĐ' : '0 VNĐ'">0 VNĐ</p>
+                                <button type="button"
+                                        class="btn btn-sm btn-success add-to-cart-btn"
+                                        th:data-id="${product.productId}">
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const buttons = document.querySelectorAll(".add-to-cart-btn");
+                    buttons.forEach(btn => {
+                        btn.addEventListener("click", function () {
+                            const productId = btn.getAttribute("data-id");
+
+                            fetch(`/cart/add/${productId}`, {
+                                method: 'GET'
+                            }).then(response => {
+                                if (response.ok) {
+                                    alert("✅ Đã thêm vào giỏ hàng!");
+                                } else {
+                                    alert("❌ Thêm vào giỏ thất bại!");
+                                }
+                            }).catch(error => {
+                                console.error(error);
+                                alert("⚠️ Có lỗi xảy ra khi thêm vào giỏ!");
+                            });
+                        });
+                    });
+                });
+            </script>
+
+
+            <!-- Trường hợp không có sản phẩm -->
+            <div th:if="${relatedProducts == null or relatedProducts.isEmpty()}" class="alert alert-info">
+                Không tìm thấy sản phẩm nào.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div th:replace="~{base :: footer}"></div>
+
+<!-- JS -->
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

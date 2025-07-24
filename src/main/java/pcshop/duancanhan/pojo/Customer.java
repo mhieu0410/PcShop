@@ -1,0 +1,48 @@
+package pcshop.duancanhan.pojo;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Entity
+@Table(name = "customer")
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long customerId;
+
+    @Column(name = "full_name", nullable = false, length = 100)
+    @NotBlank(message = "Họ và tên không được để trống")
+    private String fullName;
+
+    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không hợp lệ")
+    private String email;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Column(name = "password", nullable = false) // Nên lưu mật khẩu đã được hash
+    private String password;
+
+    @Column(name = "address", columnDefinition = "TEXT")
+    private String address;
+
+    @Column(name = "phone", length = 20)
+    private String phone;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Cart cart;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Order> orders;
+}
