@@ -51,11 +51,11 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @GetMapping("/add/{id}")
-    @ResponseBody
-    public ResponseEntity<String> addToCart(@PathVariable("id") Long productId, HttpSession session) {
-        cartService.addToCart(productId, session);
-        return ResponseEntity.ok("Added to cart");
-    }
+//    @GetMapping("/add/{id}")
+//    @ResponseBody
+//    public ResponseEntity<String> addToCart(@PathVariable("id") Long productId, HttpSession session) {
+//        cartService.addToCart(productId, session);
+//        return ResponseEntity.ok("Added to cart");
+//    }
 
 }

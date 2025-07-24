@@ -115,13 +115,13 @@ public class CartService {
         cartRepository.deleteAll();
     }
 
-    public void addToCart1(Long productId, HttpSession session) {
-        Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new Cart();
-        }
-
-        cart.addProduct(productId); // ông có thể sửa hàm này nếu chưa có sẵn
-        session.setAttribute("cart", cart);
-    }
+//    public void addToCart1(Long productId, HttpSession session) {
+//        Cart cart = (Cart) session.getAttribute("cart");
+//        if (cart == null) {
+//            cart = new Cart();
+//        }
+//
+//        cart.addProduct(productId); // ông có thể sửa hàm này nếu chưa có sẵn
+//        session.setAttribute("cart", cart);
+//    }
 }
