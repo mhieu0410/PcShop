@@ -26,6 +26,7 @@
         <th>Tổng tiền</th>
         <th>Trạng thái</th>
         <th>Địa chỉ giao hàng</th>
+        <th>Trả góp</th>
       </tr>
       </thead>
       <tbody>
@@ -35,6 +36,10 @@
         <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 2, 'POINT')} + ' VNĐ'">Tổng tiền</td>
         <td th:text="${order.status}">Trạng thái</td>
         <td th:text="${order.shippingAddress}">Địa chỉ</td>
+        <td>
+          <a th:if="${installmentMap[order.orderId] == null}" th:href="@{'/installment/create/' + ${order.orderId}}" class="btn btn-sm btn-warning">Trả góp</a>
+          <a th:if="${installmentMap[order.orderId] != null}" th:href="@{'/installment/' + ${installmentMap[order.orderId]}}" class="btn btn-sm btn-link">Xem hợp đồng</a>
+        </td>
       </tr>
       </tbody>
     </table>

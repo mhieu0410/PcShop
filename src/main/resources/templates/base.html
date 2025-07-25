@@ -42,6 +42,9 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/my-orders}">My orders</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/installments}">Trả góp</a>
+                </li>
                 <!-- Admin Link -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a class="nav-link" th:href="@{/admin/dashboard}">Quản lý</a>
