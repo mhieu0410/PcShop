@@ -8,18 +8,22 @@
 
     <!-- Stylesheets -->
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
+<!-- Navigation Bar (flex-shrink: 0) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg sticky-top">
+    <!-- Navbar content như cũ -->
+    <div class="container">
         <!-- Brand -->
-        <a class="navbar-brand" href="/">Computer Parts Store</a>
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+            <i class="fas fa-microchip me-2 text-primary"></i>
+            <span class="gradient-text">Computer Parts Store</span>
+        </a>
 
         <!-- Toggler for Mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -28,31 +32,48 @@
             <!-- Main Menu -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Trang chủ</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover" th:href="@{/}">
+                        <i class="fas fa-home me-1"></i>Trang chủ
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/products}">Sản phẩm</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover" th:href="@{/products}">
+                        <i class="fas fa-laptop me-1"></i>Sản phẩm
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}">Giỏ hàng</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover position-relative" th:href="@{/cart}">
+                        <i class="fas fa-shopping-cart me-1"></i>Giỏ hàng
+                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle cart-badge">0</span>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/build-pc}">Lắp ráp PC</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover" th:href="@{/build-pc}">
+                        <i class="fas fa-tools me-1"></i>Lắp ráp PC
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/my-orders}">My orders</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover" th:href="@{/my-orders}">
+                        <i class="fas fa-box me-1"></i>My orders
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/installments}">Trả góp</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover" th:href="@{/installments}">
+                        <i class="fas fa-credit-card me-1"></i>Trả góp
+                    </a>
                 </li>
                 <!-- Admin Link -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link" th:href="@{/admin/dashboard}">Quản lý</a>
+                    <a class="nav-link px-3 py-2 rounded-3 mx-1 nav-hover text-warning" th:href="@{/admin/dashboard}">
+                        <i class="fas fa-cog me-1"></i>Quản lý
+                        <span class="badge bg-warning text-dark ms-1">Admin</span>
+                    </a>
                 </li>
             </ul>
 
             <!-- User Actions -->
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav">
+                <!-- User Info -->
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <span class="nav-link">Xin chào, <span sec:authentication="name"></span></span>
                 </li>
@@ -70,15 +91,70 @@
     </div>
 </nav>
 
-<!-- Main Content -->
-<div class="container my-4">
-    <div th:replace="~{${content} :: content}"></div>
-</div>
+<!-- Main Content (flex: 1 0 auto) -->
+<main class="main-content">
+    <div class="container my-4">
+        <div th:replace="~{${content} :: content}"></div>
+    </div>
+</main>
 
-<!-- Footer -->
-<footer class="bg-light text-center py-3">
-    <p>© 2025 Computer Parts Store. All rights reserved.</p>
-    <p>Liên hệ: <a href="mailto:support@computerpartsstore.com">support@computerpartsstore.com</a></p>
+<!-- Footer (flex-shrink: 0, margin-top: auto) -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-microchip me-2 text-primary"></i>Computer Parts Store
+                </h5>
+                <p class="text-muted">Cửa hàng linh kiện máy tính hàng đầu với chất lượng tốt nhất.</p>
+                <div class="social-links">
+                    <a href="#" class="text-light me-3"><i class="fab fa-facebook fs-5"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-instagram fs-5"></i></a>
+                    <a href="#" class="text-light me-3"><i class="fab fa-youtube fs-5"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4">
+                <h6 class="fw-bold mb-3">Sản phẩm</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-muted text-decoration-none">CPU</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">GPU</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">RAM</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Mainboard</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h6 class="fw-bold mb-3">Dịch vụ</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-muted text-decoration-none">Lắp ráp PC</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Bảo hành</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Hỗ trợ kỹ thuật</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h6 class="fw-bold mb-3">Liên hệ</h6>
+                <p class="text-muted mb-2">
+                    <i class="fas fa-envelope me-2"></i>
+                    <a href="mailto:support@computerpartsstore.com" class="text-muted">support@computerpartsstore.com</a>
+                </p>
+                <p class="text-muted mb-2">
+                    <i class="fas fa-phone me-2"></i>1900 1234
+                </p>
+                <p class="text-muted">
+                    <i class="fas fa-map-marker-alt me-2"></i>123 Tech Street, TP.HCM
+                </p>
+            </div>
+        </div>
+        <hr class="my-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="text-muted mb-0">© 2025 Computer Parts Store. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-muted text-decoration-none me-3">Chính sách bảo mật</a>
+                <a href="#" class="text-muted text-decoration-none">Điều khoản sử dụng</a>
+            </div>
+        </div>
+    </div>
 </footer>
 
 <!-- Scripts -->
