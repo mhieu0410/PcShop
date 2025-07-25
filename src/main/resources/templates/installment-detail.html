@@ -32,11 +32,15 @@
       <td th:text="${t.status}"></td>
       <td th:text="${t.paidAt != null ? #temporals.format(t.paidAt, 'dd/MM/yyyy HH:mm') : ''}"></td>
       <td>
-        <form th:if="${t.status == 'PENDING'}" th:action="@{'/installment/transaction/' + ${t.installmentTransactionId} + '/pay'}" method="post" onsubmit="return confirm('Xác nhận thanh toán?')">
+        <form th:if="${t.status == 'PENDING'}"
+              th:action="@{/api/payments/installment}" method="post">
+          <input type="hidden" name="transactionId" th:value="${t.installmentTransactionId}" />
+          <input type="hidden" name="amount" th:value="${t.amount}" />
+          <input type="hidden" name="orderInfo" th:value="'Thanh toán kỳ trả góp số ' + ${t.period}" />
           <button type="submit" class="btn btn-sm btn-primary">Pay</button>
         </form>
       </td>
-    </tr>
+    </tr>x`
     </tbody>
   </table>
 </div>

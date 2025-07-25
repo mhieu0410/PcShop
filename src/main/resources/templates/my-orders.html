@@ -37,7 +37,6 @@
         <td th:text="${order.status}">Trạng thái</td>
         <td th:text="${order.shippingAddress}">Địa chỉ</td>
         <td>
-          <a th:if="${installmentMap[order.orderId] == null}" th:href="@{'/installment/create/' + ${order.orderId}}" class="btn btn-sm btn-warning">Trả góp</a>
           <a th:if="${installmentMap[order.orderId] != null}" th:href="@{'/installment/' + ${installmentMap[order.orderId]}}" class="btn btn-sm btn-link">Xem hợp đồng</a>
         </td>
       </tr>
