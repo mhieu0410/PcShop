@@ -32,8 +32,14 @@ public class InstallmentService {
     public Installment createInstallment(Customer customer,
                                          Order order,
                                          BigDecimal totalAmount,
-                                         Integer months,
-                                         Double interestRate) {
+                                         Integer months) {
+        // Áp dụng lãi suất cố định theo số tháng
+        double interestRate = switch (months) {
+            case 3 -> 0.02;
+            case 6 -> 0.04;
+            case 12 -> 0.06;
+            default -> 0.0;
+        };
         Installment installment = new Installment();
         installment.setCustomer(customer);
         installment.setOrder(order);

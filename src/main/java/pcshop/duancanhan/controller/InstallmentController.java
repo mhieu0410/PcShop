@@ -57,8 +57,7 @@ public class InstallmentController {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         model.addAttribute("order", order);
-        model.addAttribute("monthsOptions", List.of(3,6,12));
-        model.addAttribute("defaultRate", 0.1);
+        model.addAttribute("monthsOptions", List.of(3, 6, 12));
         model.addAttribute("pageTitle", "Tạo hợp đồng trả góp");
         return "installment-create";
     }
@@ -69,14 +68,13 @@ public class InstallmentController {
     @PostMapping("/installment/create")
     public String createInstallment(@RequestParam Long orderId,
                                     @RequestParam Integer months,
-                                    @RequestParam Double interestRate,
                                     RedirectAttributes redirectAttributes) {
         Customer customer = getCurrentCustomer();
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         BigDecimal total = order.getTotalPrice();
         Installment installment = installmentService.createInstallment(
-                customer, order, total, months, interestRate);
+                customer, order, total, months);
         installmentService.createInstallmentTransactions(installment);
         redirectAttributes.addFlashAttribute("message", "Tạo hợp đồng thành công");
         return "redirect:/installment/" + installment.getInstallmentId();

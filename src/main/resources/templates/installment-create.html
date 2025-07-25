@@ -20,10 +20,7 @@
         <option th:each="m : ${monthsOptions}" th:value="${m}" th:text="${m}"></option>
       </select>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Lãi suất (%)</label>
-      <input type="number" step="0.01" class="form-control" name="interestRate" th:value="${defaultRate}" />
-    </div>
+    <p class="mb-3">Lãi suất áp dụng: 3 tháng 2%, 6 tháng 4%, 12 tháng 6%</p>
     <button type="submit" class="btn btn-primary">Tạo hợp đồng trả góp</button>
   </form>
 </div>
