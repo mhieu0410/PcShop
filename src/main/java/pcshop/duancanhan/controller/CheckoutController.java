@@ -56,6 +56,20 @@ public class CheckoutController {
         }
     }
 
+    /**
+     * Tạo đơn hàng và chuyển sang trang chọn gói trả góp thay vì VNPay.
+     */
+    @PostMapping("/installment")
+    public String processCheckoutInstallment(@RequestParam("shippingAddress") String shippingAddress) {
+        try {
+            Order order = orderService.createOrderFromCart(shippingAddress);
+            // Chuyển sang trang tạo hợp đồng trả góp
+            return "redirect:/installment/create/" + order.getOrderId();
+        } catch (RuntimeException e) {
+            return "redirect:/checkout?error=" + e.getMessage();
+        }
+    }
+
     @GetMapping("/vnpay-callback")
     public String handleVNPayCallback(@RequestParam("vnp_ResponseCode") String responseCode,
                                       @RequestParam("vnp_TxnRef") String txnRef,

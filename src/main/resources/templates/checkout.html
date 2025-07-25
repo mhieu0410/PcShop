@@ -62,11 +62,17 @@
                 <p><strong>Họ và tên:</strong> <span th:text="${customer.fullName}">Không có tên</span></p>
                 <p><strong>Email:</strong> <span th:text="${customer.email}">Không có email</span></p>
                 <p><strong>Số điện thoại:</strong> <span th:text="${customer.phone} ?: 'Chưa có số điện thoại'">Chưa có số điện thoại</span></p>
-                <form th:action="@{/api/payments/create-payment}" method="post">
+                <form th:action="@{/api/payments/create-payment}" method="post" class="mb-2">
                     <input type="hidden" name="amount" th:value="${totalPrice}" />
                     <input type="hidden" name="orderInfo" value="Thanh toán đơn hàng linh kiện PC" />
                     <div class="text-end">
                         <button type="submit" class="btn btn-success">Thanh toán qua VNPay</button>
+                    </div>
+                </form>
+                <form th:action="@{/checkout/installment}" method="post">
+                    <input type="hidden" name="shippingAddress" th:value="${customer.address != null ? customer.address : ''}" />
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-warning">Trả góp</button>
                     </div>
                 </form>
             </div>

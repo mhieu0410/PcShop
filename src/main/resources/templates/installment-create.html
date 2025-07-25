@@ -1,0 +1,31 @@
+<!-- Trang chọn gói trả góp -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${pageTitle}">Tạo hợp đồng trả góp</title>
+  <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{base :: nav}"></div>
+<div class="container my-4" th:fragment="content">
+  <h2 class="mb-3">Tạo hợp đồng trả góp</h2>
+  <form th:action="@{/installment/create}" method="post">
+    <input type="hidden" name="orderId" th:value="${order.orderId}" />
+    <div class="mb-3">
+      <label class="form-label">Số tháng</label>
+      <select class="form-select" name="months">
+        <option th:each="m : ${monthsOptions}" th:value="${m}" th:text="${m}"></option>
+      </select>
+    </div>
+    <p class="mb-3">Lãi suất áp dụng: 3 tháng 2%, 6 tháng 4%, 12 tháng 6%</p>
+    <button type="submit" class="btn btn-primary">Tạo hợp đồng trả góp</button>
+  </form>
+</div>
+<div th:replace="~{base :: footer}"></div>
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
