@@ -148,6 +148,11 @@
             color: #155724;
         }
         
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
         .status-cancelled {
             background: #f8d7da;
             color: #721c24;
@@ -323,18 +328,20 @@
                                     <div class="customer-email" th:text="${order.customer?.email}">email@example.com</div>
                                 </div>
                             </td>
-                            <td class="total-price" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</td>
+                            <td class="total-price" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">0 VNĐ</td>
                             <td>
                                 <span th:class="${order.status == 'PENDING' ? 'order-status status-pending' : 
                                                 (order.status == 'PROCESSING' ? 'order-status status-processing' : 
                                                 (order.status == 'SHIPPED' ? 'order-status status-shipped' : 
                                                 (order.status == 'DELIVERED' ? 'order-status status-delivered' : 
-                                                'order-status status-cancelled')))}"
+                                                (order.status == 'COMPLETED' ? 'order-status status-completed' : 
+                                                'order-status status-cancelled'))))}"
                                       th:text="${order.status == 'PENDING' ? 'Chờ xử lý' : 
                                                 (order.status == 'PROCESSING' ? 'Đang xử lý' : 
                                                 (order.status == 'SHIPPED' ? 'Đã gửi hàng' : 
                                                 (order.status == 'DELIVERED' ? 'Đã giao hàng' : 
-                                                'Đã hủy')))}">
+                                                (order.status == 'COMPLETED' ? 'Thành công' : 
+                                                'Đã hủy'))))}">
                                     Chờ xử lý
                                 </span>
                             </td>

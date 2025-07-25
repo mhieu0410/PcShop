@@ -197,6 +197,60 @@
             opacity: 0.5;
         }
         
+        .editable-field {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .editable-field .display-text {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .editable-field .edit-input {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .editable-field .edit-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .editable-field .btn-save,
+        .editable-field .btn-cancel {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .editable-field .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .editable-field .btn-save:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .editable-field .btn-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+        .editable-field .btn-cancel:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
         @media (max-width: 768px) {
             .admin-container {
                 padding: 1rem;
@@ -259,17 +313,46 @@
                     <tbody>
                         <tr th:each="customer : ${customers}">
                             <td th:text="${customer.customerId}">1</td>
-                            <td th:text="${customer.fullName}">Nguyễn Văn A</td>
-                            <td th:text="${customer.email}">example@email.com</td>
-                            <td th:text="${customer.phone}">0123456789</td>
-                            <td th:text="${customer.address}">Hà Nội, Việt Nam</td>
-                            <td th:text="${#temporals.format(customer.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                            <td>
+                                <div class="editable-field" data-field="fullName" th:data-customer-id="${customer.customerId}">
+                                    <span class="display-text" th:text="${customer.fullName}">Tên khách hàng</span>
+                                    <input type="text" class="edit-input" th:value="${customer.fullName}" style="display: none;">
+                                    <div class="edit-buttons" style="display: none;">
+                                        <button class="btn-save" title="Lưu"><i class="fas fa-check"></i></button>
+                                        <button class="btn-cancel" title="Hủy"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editable-field" data-field="email" th:data-customer-id="${customer.customerId}">
+                                    <span class="display-text" th:text="${customer.email}">email@example.com</span>
+                                    <input type="email" class="edit-input" th:value="${customer.email}" style="display: none;">
+                                    <div class="edit-buttons" style="display: none;">
+                                        <button class="btn-save" title="Lưu"><i class="fas fa-check"></i></button>
+                                        <button class="btn-cancel" title="Hủy"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="editable-field" data-field="phone" th:data-customer-id="${customer.customerId}">
+                                    <span class="display-text" th:text="${customer.phone}">0123456789</span>
+                                    <input type="tel" class="edit-input" th:value="${customer.phone}" style="display: none;">
+                                    <div class="edit-buttons" style="display: none;">
+                                        <button class="btn-save" title="Lưu"><i class="fas fa-check"></i></button>
+                                        <button class="btn-cancel" title="Hủy"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${customer.address}">Địa chỉ</td>
+                            <td th:text="${#temporals.format(customer.createdAt, 'dd/MM/yyyy')}">01/01/2024</td>
                             <td>
                                 <div class="action-buttons">
                                     <button class="btn-action btn-edit">
                                         <i class="fas fa-edit"></i> Sửa
                                     </button>
-                                    <button class="btn-action btn-delete">
+                                    <button class="btn-action btn-delete delete-user-btn" 
+                                            th:data-user-id="${customer.customerId}"
+                                            th:data-user-name="${customer.fullName}">
                                         <i class="fas fa-trash"></i> Xóa
                                     </button>
                                 </div>
@@ -281,7 +364,209 @@
         </div>
     </div>
 
+    <!-- Modal xác nhận xóa -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa user <strong id="userNameToDelete"></strong>?</p>
+                    <p class="text-danger">Hành động này không thể hoàn tác!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteUser">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let userIdToDelete = null;
+        
+        // Xử lý nút xóa và inline editing
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.delete-user-btn');
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+            const confirmDeleteBtn = document.getElementById('confirmDeleteUser');
+            
+            // Xử lý nút xóa
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    userIdToDelete = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    document.getElementById('userNameToDelete').textContent = userName;
+                    deleteModal.show();
+                });
+            });
+            
+            // Xác nhận xóa
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (userIdToDelete) {
+                    deleteUser(userIdToDelete);
+                    deleteModal.hide();
+                }
+            });
+            
+            // Xử lý inline editing
+            setupInlineEditing();
+        });
+        
+        // Hàm xóa user
+        function deleteUser(userId) {
+            fetch(`/admin/users/delete/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Lỗi kết nối: ' + error.message);
+            });
+        }
+        
+        // Hàm setup inline editing
+        function setupInlineEditing() {
+            const editableFields = document.querySelectorAll('.editable-field');
+            
+            editableFields.forEach(field => {
+                const displayText = field.querySelector('.display-text');
+                const editInput = field.querySelector('.edit-input');
+                const editButtons = field.querySelector('.edit-buttons');
+                const saveBtn = field.querySelector('.btn-save');
+                const cancelBtn = field.querySelector('.btn-cancel');
+                
+                let originalValue = displayText.textContent.trim();
+                
+                // Click vào text để edit
+                displayText.addEventListener('click', function() {
+                    startEditing();
+                });
+                
+                // Nút lưu
+                saveBtn.addEventListener('click', function() {
+                    saveChanges();
+                });
+                
+                // Nút hủy
+                cancelBtn.addEventListener('click', function() {
+                    cancelEditing();
+                });
+                
+                // Enter để lưu
+                editInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        saveChanges();
+                    }
+                });
+                
+                // Escape để hủy
+                editInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        cancelEditing();
+                    }
+                });
+                
+                function startEditing() {
+                    displayText.style.display = 'none';
+                    editInput.style.display = 'block';
+                    editButtons.style.display = 'flex';
+                    editInput.focus();
+                    editInput.select();
+                }
+                
+                function cancelEditing() {
+                    displayText.style.display = 'block';
+                    editInput.style.display = 'none';
+                    editButtons.style.display = 'none';
+                    editInput.value = originalValue;
+                }
+                
+                function saveChanges() {
+                    const newValue = editInput.value.trim();
+                    const fieldName = field.getAttribute('data-field');
+                    const customerId = field.getAttribute('data-customer-id');
+                    
+                    if (newValue === originalValue) {
+                        cancelEditing();
+                        return;
+                    }
+                    
+                    // Validate
+                    if (fieldName === 'email' && !isValidEmail(newValue)) {
+                        alert('Email không hợp lệ!');
+                        return;
+                    }
+                    
+                    if (fieldName === 'phone' && !isValidPhone(newValue)) {
+                        alert('Số điện thoại không hợp lệ!');
+                        return;
+                    }
+                    
+                    // Gửi request cập nhật
+                    updateUserField(customerId, fieldName, newValue, function(success) {
+                        if (success) {
+                            originalValue = newValue;
+                            displayText.textContent = newValue;
+                            cancelEditing();
+                        }
+                    });
+                }
+            });
+        }
+        
+        // Hàm cập nhật field
+        function updateUserField(customerId, fieldName, newValue, callback) {
+            fetch(`/admin/users/update/${customerId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    field: fieldName,
+                    value: newValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    callback(true);
+                } else {
+                    alert('Lỗi: ' + data.message);
+                    callback(false);
+                }
+            })
+            .catch(error => {
+                alert('Lỗi kết nối: ' + error.message);
+                callback(false);
+            });
+        }
+        
+        // Validation functions
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function isValidPhone(phone) {
+            const phoneRegex = /^[0-9]{10,11}$/;
+            return phoneRegex.test(phone);
+        }
+    </script>
 </body>
 </html> 

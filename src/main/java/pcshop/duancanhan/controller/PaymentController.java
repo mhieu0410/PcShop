@@ -53,7 +53,7 @@ public class PaymentController {
             model.addAttribute("message", "Thanh toán thành công! Xem lịch sử đơn hàng tại <a href='/my-orders'>đây</a>.");
             return "payment-result"; // Hiển thị thông báo và liên kết đến /my-orders
         } else {
-            orderService.updateOrderStatus(Long.valueOf(orderId), "FAILED");
+            orderService.updateOrderStatus(Long.valueOf(orderId), "CANCELLED");
             model.addAttribute("status", "fail");
             model.addAttribute("message", "Thanh toán thất bại! Vui lòng thử lại.");
             return "payment-result";
